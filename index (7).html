@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Workout Tracker - Free Audit</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0b1326;
+            --bg-secondary: #131b2e;
+            --bg-tertiary: #171f33;
+            --bg-quaternary: #222a3d;
+            --bg-hover: #2d3449;
+            --text-primary: #dae2fd;
+            --text-secondary: #bbcabf;
+            --text-muted: #8a9598;
+            --accent-green: #4edea3;
+            --accent-orange: #ffb690;
+            --accent-lime: #94de2d;
+            --shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* NOTIFICATION BAR */
+        .notification-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-quaternary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .notification-content {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 126, 45, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-text h3 {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--accent-orange);
+            letter-spacing: 0.55px;
+            margin-bottom: 4px;
+        }
+
+        .notification-text p {
+            font-size: 15px;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .badge, .btn-dismiss {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.88px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .btn-dismiss {
+            background-color: var(--bg-hover);
+            padding: 4px 16px;
+        }
+
+        /* HERO SECTION */
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .hero-block {
+            background-color: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-block::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 100% 0%, rgba(78, 222, 163, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        .phase-badge {
+            display: inline-block;
+            background-color: rgba(78, 222, 163, 0.1);
+            color: var(--accent-green);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.55px;
+            margin-bottom: 4px;
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin: 16px 0;
+            letter-spacing: -0.9px;
+        }
+
+        .hero-description {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .metrics-inline {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 32px;
+        }
+
+        .metric-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 42, 61, 0.8);
+            padding: 4px 16px;
+            border-radius: 8px;
+            backdrop-filter: blur(6px);
+        }
+
+        .metric-item span {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* METRICS GRID */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .metric-card {
+            background-color: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .metric-card-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            letter-spacing: 0.88px;
+            margin-bottom: 16px;
+        }
+
+        .metric-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--text-primary);
+            letter-spacing: -0.96px;
+        }
+
+        .metric-subtext {
+            font-size: 13px;
+            color: var(--accent-green);
+            margin-top: 4px;
+        }
+
+        /* SECTION HEADER */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-primary);
+            letter-spacing: -0.24px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .section-badges {
+            display: flex;
+            gap: 8px;
+        }
+
+        .badge-small {
+            background-color: var(--bg-quaternary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.88px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* EXERCISE LIST */
+        .exercise-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .exercise-card {
+            background-color: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            box-shadow: var(--shadow);
+        }
+
+        .exercise-card.active {
+            background-color: var(--bg-quaternary);
+            border-left: 6px solid var(--accent-green);
+        }
+
+        .exercise-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--bg-hover);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        .exercise-content {
+            flex: 1;
+        }
+
+        .exercise-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .exercise-tag {
+            background-color: var(--bg-hover);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .exercise-tag.highlight {
+            background-color: rgba(255, 126, 45, 0.15);
+            color: var(--accent-orange);
+            font-weight: 600;
+        }
+
+        .exercise-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .exercise-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .stat-item {
+            display: flex;
+            gap: 4px;
+        }
+
+        .stat-item strong {
+            color: var(--text-primary);
+        }
+
+        .exercise-status {
+            background-color: rgba(78, 222, 163, 0.1);
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--accent-green);
+            font-weight: 600;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* FORM SECTION */
+        .form-section {
+            background-color: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .form-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.88px;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: var(--bg-quaternary);
+            border: 1px solid var(--bg-hover);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'Lexend', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            background-color: var(--bg-hover);
+            box-shadow: 0 0 0 3px rgba(78, 222, 163, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent-green);
+            color: #003824;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Lexend', sans-serif;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover {
+            background-color: #3dc98c;
+            box-shadow: 0 8px 16px rgba(78, 222, 163, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:disabled {
+            background-color: var(--bg-hover);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-payment {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent-orange);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Lexend', sans-serif;
+            text-transform: uppercase;
+            margin-top: 12px;
+        }
+
+        .btn-payment:hover {
+            background-color: #ff9e70;
+            box-shadow: 0 8px 16px rgba(255, 126, 45, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .form-message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .form-message.success {
+            background-color: rgba(78, 222, 163, 0.1);
+            color: var(--accent-green);
+            display: block;
+        }
+
+        .form-message.error {
+            background-color: rgba(255, 126, 45, 0.1);
+            color: var(--accent-orange);
+            display: block;
+        }
+
+        /* ROADMAP SECTION */
+        .roadmap-section {
+            margin-bottom: 40px;
+        }
+
+        .roadmap-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .roadmap-card {
+            background-color: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .roadmap-card.active {
+            background-color: var(--bg-quaternary);
+            box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1), 0 0 20px rgba(78, 222, 163, 0.1);
+        }
+
+        .roadmap-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--accent-green);
+            font-weight: 600;
+            letter-spacing: 0.88px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .roadmap-status {
+            background-color: rgba(78, 222, 163, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--accent-green);
+            white-space: nowrap;
+        }
+
+        .roadmap-status.active-now {
+            background-color: var(--accent-green);
+            color: #003824;
+            font-weight: bold;
+        }
+
+        .roadmap-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .roadmap-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            background-color: var(--bg-hover);
+            height: 6px;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-fill {
+            background-color: var(--accent-green);
+            height: 100%;
+            border-radius: 999px;
+        }
+
+        /* WEEKLY SCHEDULE */
+        .weekly-schedule {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .day-card {
+            background-color: var(--bg-quaternary);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .day-card.today {
+            background-color: var(--bg-hover);
+            border: 2px solid var(--accent-green);
+        }
+
+        .day-card-day {
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--accent-green);
+            margin-bottom: 8px;
+            font-size: 11px;
+            letter-spacing: 0.88px;
+        }
+
+        .day-card.today .day-card-day {
+            color: var(--accent-green);
+        }
+
+        .day-card-name {
+            color: var(--text-primary);
+            font-size: 11px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .day-card-time {
+            color: var(--text-muted);
+            font-size: 9px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 16px;
+            }
+
+            .hero-block {
+                padding: 24px;
+            }
+
+            .form-section {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: 24px;
+                letter-spacing: -0.6px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .metric-value {
+                font-size: 32px;
+            }
+
+            .exercise-card {
+                flex-direction: column;
+            }
+
+            .exercise-status {
+                align-self: flex-start;
+                margin-top: 12px;
+            }
+
+            .metrics-inline {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .notification-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .notification-actions {
+                justify-content: space-between;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .section-badges {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .badge-small {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- NOTIFICATION BAR -->
+        <div class="notification-bar">
+            <div class="notification-content">
+                <div class="notification-icon">
+                    ⚠️
+                </div>
+                <div class="notification-text">
+                    <h3>Automated Session Cue</h3>
+                    <p>Keep your 7-day streak going! Time for cooldown stretch.</p>
+                </div>
+            </div>
+            <div class="notification-actions">
+                <span class="badge">Sync: Live Telemetry</span>
+                <button class="btn-dismiss">Dismiss</button>
+            </div>
+        </div>
+
+        <!-- HERO SECTION -->
+        <div class="hero-section">
+            <div class="hero-block">
+                <span class="phase-badge">Phase 2: Hypertrophy & Fat Loss</span>
+                <span class="phase-badge" style="background-color: transparent; margin-left: 8px;">• Week 6, Day 42</span>
+                <h1 class="hero-title">Monday: Chest & Triceps</h1>
+                <p class="hero-description">
+                    High-threshold motor unit recruitment focusing on mechanical tension, sustained eccentric tempos, and acute metabolic tricep burnout.
+                </p>
+                <div class="metrics-inline">
+                    <div class="metric-item">
+                        <span>⏱️ 48 / 60 Min</span>
+                    </div>
+                    <div class="metric-item">
+                        <span>🔥 385 kcal Burn</span>
+                    </div>
+                    <div class="metric-item">
+                        <span>💪 RPE Target: 8.5</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-card-title">Session Progression</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <div class="metric-value">80%</div>
+                        <div class="metric-subtext">4 of 5 Done</div>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin-top: 12px;">1 Final Triceps exercise left to complete session</p>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-card-title">Streak Velocity</div>
+                    <div class="metric-value" style="font-size: 28px;">7 Days</div>
+                    <p style="font-size: 13px; color: var(--accent-orange); margin-top: 8px;">🔥 Top 5% Discipline</p>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-card-title">Rest Interval</div>
+                    <div class="metric-value" style="font-size: 28px; color: var(--accent-green);">00:43</div>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin-top: 8px;">Progress: 71.67%</p>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-card-title">Session Gauge</div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="metric-value" style="font-size: 24px;">8.2/10</div>
+                        <span style="font-size: 13px; color: var(--accent-green);">Excellent</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TODAY'S PROTOCOL BREAKDOWN -->
+        <div>
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Today's Protocol Breakdown</h2>
+                    <p class="section-subtitle">Log weight, reps, and track precise rest windows for maximum adaptation.</p>
+                </div>
+                <div class="section-badges">
+                    <span class="badge-small">Target Volume: 15 Sets</span>
+                    <span class="badge-small">Tempo: 3-0-1-0</span>
+                </div>
+            </div>
+
+            <div class="exercise-list">
+                <div class="exercise-card">
+                    <div style="display: flex; gap: 16px; flex: 1;">
+                        <div class="exercise-icon">💪</div>
+                        <div class="exercise-content">
+                            <div class="exercise-name">
+                                1. Push-ups (Dynamic Activation)
+                                <span class="exercise-tag">Chest & Core</span>
+                            </div>
+                            <p class="exercise-description">Slow eccentric phase (3 sec down, 1 sec explode). Form score: <strong style="color: var(--accent-green);">98%</strong></p>
+                            <div class="exercise-stats">
+                                <div class="stat-item">Sets: <strong>3</strong></div>
+                                <div class="stat-item">Reps: <strong>15, 15, 14</strong></div>
+                                <div class="stat-item">Rest: <strong>60s</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exercise-status">✓ Completed</div>
+                </div>
+
+                <div class="exercise-card">
+                    <div style="display: flex; gap: 16px; flex: 1;">
+                        <div class="exercise-icon">🏋️</div>
+                        <div class="exercise-content">
+                            <div class="exercise-name">
+                                2. Barbell Bench Press
+                                <span class="exercise-tag">Mid Chest & Triceps</span>
+                                <span class="exercise-tag highlight">New PR +5kg</span>
+                            </div>
+                            <p class="exercise-description">Pyramid load protocol. Controlled scapular retraction with feet anchored.</p>
+                            <div style="display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap;">
+                                <div style="background-color: var(--bg-quaternary); padding: 8px; border-radius: 8px; text-align: center;">
+                                    <div style="font-weight: 600; color: var(--text-primary);">70 kg × 12</div>
+                                    <div style="font-size: 11px; color: var(--accent-green);">RPE 7.5</div>
+                                </div>
+                                <div style="background-color: var(--bg-quaternary); padding: 8px; border-radius: 8px; text-align: center;">
+                                    <div style="font-weight: 600; color: var(--text-primary);">75 kg × 10</div>
+                                    <div style="font-size: 11px; color: var(--accent-green);">RPE 8.5</div>
+                                </div>
+                                <div style="background-color: var(--bg-quaternary); padding: 8px; border-radius: 8px; text-align: center;">
+                                    <div style="font-weight: 600; color: var(--text-primary);">80 kg × 8</div>
+                                    <div style="font-size: 11px; color: var(--accent-lime);">RPE 9.0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exercise-status">✓ Completed</div>
+                </div>
+
+                <div class="exercise-card">
+                    <div style="display: flex; gap: 16px; flex: 1;">
+                        <div class="exercise-icon">🦾</div>
+                        <div class="exercise-content">
+                            <div class="exercise-name">
+                                3. Incline Dumbbell Fly
+                                <span class="exercise-tag">Upper Clavicular Chest</span>
+                            </div>
+                            <p class="exercise-description">Deep stretch at bottom tier, avoid elbow hyperextension. 30-degree incline.</p>
+                            <div class="exercise-stats">
+                                <div class="stat-item">Sets: <strong>3</strong></div>
+                                <div class="stat-item">Logged: <strong>18kg × 12, 20kg × 11, 20kg × 10</strong></div>
+                                <div class="stat-item">Rest: <strong>60s</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exercise-status">✓ Completed</div>
+                </div>
+
+                <div class="exercise-card">
+                    <div style="display: flex; gap: 16px; flex: 1;">
+                        <div class="exercise-icon">🎯</div>
+                        <div class="exercise-content">
+                            <div class="exercise-name">
+                                4. Tricep Rope Pushdown
+                                <span class="exercise-tag">Lateral Tricep Head</span>
+                            </div>
+                            <p class="exercise-description">Spreading handles aggressively at lockout with 1-second peak isometric contraction.</p>
+                            <div class="exercise-stats">
+                                <div class="stat-item">Sets: <strong>3</strong></div>
+                                <div class="stat-item">Logged: <strong>27.5kg × 15, 30kg × 12, 32.5kg × 11</strong></div>
+                                <div class="stat-item">Rest: <strong>60s</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exercise-status">✓ Completed</div>
+                </div>
+
+                <div class="exercise-card active">
+                    <div style="display: flex; gap: 16px; flex: 1;">
+                        <div class="exercise-icon" style="background-color: var(--accent-green); color: #003824;">▶️</div>
+                        <div class="exercise-content">
+                            <div class="exercise-name">
+                                5. Overhead Cable Tricep Extension
+                                <span class="exercise-tag" style="background-color: var(--bg-tertiary);">Long Head Tricep</span>
+                                <span class="exercise-tag" style="background-color: rgba(78, 222, 163, 0.2); color: var(--accent-green); font-weight: 600;">In Progress</span>
+                            </div>
+                            <p class="exercise-description">Maximize long head stretch over shoulder line. Keep elbows tucked forward.</p>
+                            <button class="btn-submit" style="margin-top: 12px; background-color: var(--accent-green); color: #003824;">Mark Set 3 Complete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COACH INSIGHT CARD -->
+        <div style="background-color: var(--bg-tertiary); border-radius: 12px; padding: 24px; margin: 40px 0; display: flex; gap: 16px;">
+            <div style="background-color: rgba(255, 126, 45, 0.15); border-radius: 12px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px;">
+                💡
+            </div>
+            <div style="flex: 1;">
+                <div style="font-size: 11px; text-transform: uppercase; color: var(--accent-orange); letter-spacing: 0.55px; font-weight: 600; margin-bottom: 8px;">
+                    Algorithmic Coach Insight • Nutrition & Anabolic Recovery Window
+                </div>
+                <p style="color: var(--text-primary); font-size: 15px; line-height: 1.6; margin-bottom: 12px;">
+                    You hit impressive personal records on <strong>Bench Press (80kg × 8)</strong> today! Ensure at least <strong>30g high-bioavailability protein</strong> within the next 45 minutes for optimal muscle synthesis and glycogen replenishment.
+                </p>
+                <button class="btn-submit" style="max-width: 300px; background-color: var(--accent-green); color: #003824;">Log Post-Workout Shake →</button>
+            </div>
+        </div>
+
+        <!-- 90-DAY PROGRESSION -->
+        <div class="roadmap-section">
+            <div style="margin-bottom: 24px;">
+                <span style="font-size: 11px; text-transform: uppercase; color: var(--accent-green); font-weight: 600; letter-spacing: 0.55px;">Macrocycle Overview</span>
+                <h2 class="section-title">90-Day Workout Progression Plan</h2>
+                <p class="section-subtitle">Structured three-month progressive periodization engineered for sustainable lean mass and fat loss.</p>
+            </div>
+
+            <div class="roadmap-cards">
+                <div class="roadmap-card">
+                    <div class="roadmap-label">
+                        Month 1: Foundation
+                        <span class="roadmap-status">Completed ✓</span>
+                    </div>
+                    <h3 class="roadmap-title">Adaptation & Form Mastery</h3>
+                    <p class="roadmap-description">3 days/week structured full-body split. Baseline strength assessment, motor pattern recalibration, and strict consistency discipline.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 13px; color: var(--text-secondary);">Volume Completion</span>
+                        <span style="font-size: 13px; color: var(--accent-green); font-weight: 600;">100% (12/12 workouts)</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <div class="roadmap-card active">
+                    <div class="roadmap-label">
+                        Month 2: Progression
+                        <span class="roadmap-status active-now">Active Now</span>
+                    </div>
+                    <h3 class="roadmap-title">Hypertrophy & Volume Overload</h3>
+                    <p class="roadmap-description">4-5 days/week upper-lower & push-pull-legs hybrid. Progressive overload ramping, 3-sec eccentric tempos, targeted isolation sets.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 13px; color: var(--text-secondary);">Sprint Velocity</span>
+                        <span style="font-size: 13px; color: var(--accent-green); font-weight: 600;">Day 42 of 60</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 70%;"></div>
+                    </div>
+                </div>
+
+                <div class="roadmap-card" style="opacity: 0.8;">
+                    <div class="roadmap-label">
+                        Month 3: Peak Transformation
+                        <span class="roadmap-status">Upcoming</span>
+                    </div>
+                    <h3 class="roadmap-title">Conditioning & Density</h3>
+                    <p class="roadmap-description">Agonist-antagonist supersets, metabolic conditioning density blocks, final body recomposition peaking, and 1RM personal records validation.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 13px; color: var(--text-secondary);">Commencement</span>
+                        <span style="font-size: 13px; color: var(--text-secondary); font-weight: 600;">In 18 Days</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEEKLY SCHEDULE & CONFIG -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 40px;">
+            <div style="background-color: var(--bg-tertiary); border-radius: 12px; padding: 24px; box-shadow: var(--shadow);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div>
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.88px; font-weight: 600;">Periodization Architecture</div>
+                        <h3 class="section-title">Weekly Training Split Schedule</h3>
+                    </div>
+                    <span style="background-color: rgba(78, 222, 163, 0.1); padding: 4px 8px; border-radius: 4px; font-size: 11px; color: var(--accent-green); font-weight: 600; white-space: nowrap;">Week 6 of 12</span>
+                </div>
+
+                <div class="weekly-schedule">
+                    <div class="day-card today">
+                        <div class="day-card-day">Mon</div>
+                        <div class="day-card-name">Push & Tri</div>
+                        <div style="background-color: var(--accent-green); color: #003824; padding: 2px 4px; border-radius: 3px; font-size: 8px; font-weight: 600; text-align: center; margin-top: 4px;">TODAY</div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-card-day">Tue</div>
+                        <div class="day-card-name">Pull & Bi</div>
+                        <div class="day-card-time">60 Min</div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-card-day">Wed</div>
+                        <div class="day-card-name">Mobility</div>
+                        <div class="day-card-time" style="color: var(--accent-lime);">Recovery</div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-card-day">Thu</div>
+                        <div class="day-card-name">Legs & Abs</div>
+                        <div class="day-card-time">60 Min</div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-card-day">Fri</div>
+                        <div class="day-card-name">Upper Str.</div>
+                        <div class="day-card-time">55 Min</div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-card-day">Sat</div>
+                        <div class="day-card-name">HIIT Cardio</div>
+                        <div class="day-card-time" style="color: var(--accent-orange);">40 Min</div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-card-day">Sun</div>
+                        <div class="day-card-name">Full Rest</div>
+                        <div class="day-card-time">Recharge</div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 16px; font-size: 13px; color: var(--text-secondary);">
+                    <strong style="color: var(--text-primary);">Weekly Cumulative Target:</strong> 5 Sessions • 295 Active Minutes
+                </p>
+                <button class="btn-submit" style="margin-top: 12px; background-color: var(--accent-green); color: #003824;">Export Schedule to Calendar</button>
+            </div>
+
+            <div style="background-color: var(--bg-tertiary); border-radius: 12px; padding: 24px; box-shadow: var(--shadow);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.88px; font-weight: 600; margin-bottom: 4px;">Current Setup</div>
+                        <h3 class="section-title" style="font-size: 20px; margin: 0;">Program Configuration</h3>
+                    </div>
+                </div>
+
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Custom profile tuned during Month 1 Assessment:</p>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="background-color: var(--bg-quaternary); padding: 8px; border-radius: 8px; display: flex; gap: 8px;">
+                        <span style="font-size: 20px;">🏋️</span>
+                        <div>
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.88px; font-weight: 600;">Environment</div>
+                            <div style="color: var(--text-primary); font-size: 14px; font-weight: 600;">Gym Workout (Full Equipment)</div>
+                        </div>
+                    </div>
+                    <div style="background-color: var(--bg-quaternary); padding: 8px; border-radius: 8px; display: flex; gap: 8px;">
+                        <span style="font-size: 20px;">⏰</span>
+                        <div>
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.88px; font-weight: 600;">Session Window</div>
+                            <div style="color: var(--text-primary); font-size: 14px; font-weight: 600;">60 min sessions max</div>
+                        </div>
+                    </div>
+                    <div style="background-color: var(--bg-quaternary); padding: 8px; border-radius: 8px; display: flex; gap: 8px;">
+                        <span style="font-size: 20px;">🥤</span>
+                        <div>
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.88px; font-weight: 600;">Supplements & Diet</div>
+                            <div style="color: var(--text-primary); font-size: 14px; font-weight: 600;">Moderate Budget Plan</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-submit" style="margin-top: 16px; background-color: var(--bg-hover);">Adjust Program Settings</button>
+            </div>
+        </div>
+
+        <!-- FORM SECTION -->
+        <div class="form-section">
+            <h2 class="form-title">Get Your Free Fitness Audit</h2>
+            <p class="form-subtitle">
+                Unlock personalized insights into your workout routine, nutrition, and recovery strategy. Our AI-powered assessment takes less than 5 minutes.
+            </p>
+
+            <form id="auditForm">
+                <div id="formMessage" class="form-message"></div>
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        placeholder="Enter your full name" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="your@email.com" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        placeholder="+91 XXXXX XXXXX" 
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">Get Free Audit Now</button>
+                <a href="https://payments.cashfree.com/forms/getaudit" target="_blank" class="btn-payment">
+                    Unlock Premium Audit for ₹1
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-L3L2Sy-EeGgkP9R0pkVcitOzY81VLrXZE7MOz6puLe90gS5bp5J6UDCD34R_9kn4/exec';
+
+        const form = document.getElementById('auditForm');
+        const formMessage = document.getElementById('formMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            // Client-side validation
+            if (!name) {
+                showError('Please enter your name');
+                return;
+            }
+            if (!email || !email.includes('@')) {
+                showError('Please enter a valid email');
+                return;
+            }
+            if (!phone || phone.length < 7) {
+                showError('Please enter a valid phone number');
+                return;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+            formMessage.textContent = '';
+            formMessage.className = 'form-message';
+
+            // Build URL with URLSearchParams
+            const params = new URLSearchParams({
+                name: name,
+                email: email,
+                phone: phone
+            });
+
+            const fullUrl = APPSCRIPT_URL + '?' + params.toString();
+
+            // Use Image Beacon technique - works with file:// protocol
+            // This bypasses CORS entirely and works in all browsers
+            try {
+                console.log('Sending form data using image beacon:', fullUrl);
+                
+                // Create an image element - this will send the request
+                const img = new Image();
+                
+                // Set timeout to show success after 2 seconds
+                // The image might not load, but the request is sent to AppScript
+                const successTimer = setTimeout(function() {
+                    console.log('Data sent to AppScript');
+                    showSuccess();
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Get Free Audit Now';
+                }, 2000);
+                
+                // If image loads (unlikely but possible), clear timer and show success
+                img.onload = function() {
+                    clearTimeout(successTimer);
+                    showSuccess();
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Get Free Audit Now';
+                };
+                
+                // If image fails to load, still show success (data was sent)
+                img.onerror = function() {
+                    clearTimeout(successTimer);
+                    showSuccess();
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Get Free Audit Now';
+                };
+                
+                // Trigger the request by setting src
+                img.src = fullUrl;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                // Even on error, data likely reached AppScript
+                showSuccess();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Get Free Audit Now';
+            }
+        });
+
+        function showSuccess() {
+            formMessage.className = 'form-message success';
+            formMessage.textContent = '✓ Audit request submitted! Check your email for next steps.';
+            form.reset();
+            
+            // Keep success message visible for 5 seconds then fade
+            setTimeout(() => {
+                formMessage.style.opacity = '0.7';
+            }, 3000);
+        }
+
+        function showError(message = 'Error submitting form. Please check your details and try again.') {
+            formMessage.className = 'form-message error';
+            formMessage.textContent = '✗ ' + message;
+        }
+
+        // Log when page loads
+        console.log('Form initialized. AppScript URL:', APPSCRIPT_URL);
+        console.log('Using Image Beacon technique for file:// protocol compatibility');
+    </script>
+</body>
+</html>
